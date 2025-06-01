@@ -1,0 +1,22 @@
+# Unity
+Library/
+Temp/
+Obj/
+Build/
+Builds/
+Logs/
+MemoryCaptures/
+UserSettings/
+packagecache/
+Packages/packages-lock.json
+
+# VS/IDE
+*.csproj
+*.sln
+*.user
+*.unityproj
+
+# Sistema
+.DS_Store
+Thumbs.db
+
