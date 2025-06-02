@@ -12,10 +12,10 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Snake
+  - SnakeHead
   - Water
   - UI
-  - 
+  - SnakeBody
   - 
   - 
   - 

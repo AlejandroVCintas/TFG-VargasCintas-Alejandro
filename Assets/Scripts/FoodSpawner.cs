@@ -31,7 +31,6 @@ public class FoodSpawner : MonoBehaviour
         Vector2 spawnPosition;
         int attempts = 0;
 
-        // Intentar evitar que aparezca sobre la serpiente
         do
         {
             x = Mathf.RoundToInt(Random.Range(bounds.min.x, bounds.max.x));
@@ -43,7 +42,6 @@ public class FoodSpawner : MonoBehaviour
 
         currentFood = Instantiate(foodPrefab, spawnPosition, Quaternion.identity);
 
-        // Asigna el sprite si lo hemos definido
         if (foodSprite != null)
         {
             SpriteRenderer sr = currentFood.GetComponent<SpriteRenderer>();
@@ -53,12 +51,10 @@ public class FoodSpawner : MonoBehaviour
             }
         }
 
-        // Añadir comportamiento al recoger
         FoodTrigger trigger = currentFood.AddComponent<FoodTrigger>();
         trigger.spawner = this;
     }
 
-    // Componente interno para gestionar la colisión
     private class FoodTrigger : MonoBehaviour
     {
         public FoodSpawner spawner;
