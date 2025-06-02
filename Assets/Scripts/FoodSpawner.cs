@@ -1,69 +1,75 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class FoodSpawner : MonoBehaviour
 {
-    public GameObject Food;
-    public Vector2Int gridSize = new Vector2Int(20, 20);
-    public Transform snakeTransform;
+    public Collider2D GridArea;
+    public GameObject foodPrefab;
+    public Sprite foodSprite;
 
-    [HideInInspector] public GameObject currentFood;
+    private Snake snake;
+    private GameObject currentFood;
+
+    private void Awake()
+    {
+        snake = Object.FindFirstObjectByType<Snake>();
+    }
+
+    private void Start()
+    {
+        SpawnFood();
+    }
 
     public void SpawnFood()
     {
         if (currentFood != null)
+        {
             Destroy(currentFood);
+        }
 
-        Vector3 spawnPosition;
-        int maxAttempts = 100;
+        Bounds bounds = GridArea.bounds;
+        int x, y;
+        Vector2 spawnPosition;
         int attempts = 0;
 
+        // Intentar evitar que aparezca sobre la serpiente
         do
         {
-            spawnPosition = new Vector3(
-                Random.Range(0, gridSize.x),
-                Random.Range(0, gridSize.y),
-                0
-            );
+            x = Mathf.RoundToInt(Random.Range(bounds.min.x, bounds.max.x));
+            y = Mathf.RoundToInt(Random.Range(bounds.min.y, bounds.max.y));
+            spawnPosition = new Vector2(x, y);
             attempts++;
-
-        } while (IsOnSnake(spawnPosition) && attempts < maxAttempts);
-
-        Transform gridTransform = GameObject.Find("Grid")?.transform;
-
-        currentFood = Instantiate(Food, spawnPosition, Quaternion.identity, gridTransform);
-
-        // Opción: animación
-        Animator anim = currentFood.GetComponent<Animator>();
-        if (anim != null)
-        {
-            anim.SetTrigger("Spawn");
         }
-    }
+        while (snake != null && snake.Occupies(x, y) && attempts < 100);
 
-    private bool IsOnSnake(Vector3 position)
-    {
-        if (snakeTransform == null) return false;
+        currentFood = Instantiate(foodPrefab, spawnPosition, Quaternion.identity);
 
-        // Comprobamos la cabeza y los cuerpos hijos
-        if (Vector3.Distance(position, snakeTransform.position) < 0.5f)
-            return true;
-
-        foreach (Transform part in snakeTransform.GetComponentsInChildren<Transform>())
+        // Asigna el sprite si lo hemos definido
+        if (foodSprite != null)
         {
-            if (Vector3.Distance(position, part.position) < 0.5f)
-                return true;
+            SpriteRenderer sr = currentFood.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                sr.sprite = foodSprite;
+            }
         }
 
-        return false;
+        // Añadir comportamiento al recoger
+        FoodTrigger trigger = currentFood.AddComponent<FoodTrigger>();
+        trigger.spawner = this;
     }
 
-    void Start()
+    // Componente interno para gestionar la colisión
+    private class FoodTrigger : MonoBehaviour
     {
-        if (snakeTransform == null)
-            snakeTransform = GameObject.Find("Snake")?.transform;
+        public FoodSpawner spawner;
 
-        SpawnFood();
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.CompareTag("Player") || other.CompareTag("Snake"))
+            {
+                spawner.SpawnFood();
+                Destroy(gameObject);
+            }
+        }
     }
 }
-

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 793654960350466975}
   - component: {fileID: 3714885047321413932}
   - component: {fileID: 276110471642222744}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -133,7 +133,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.65555555, y: 0.7111111}
+  m_Size: {x: 0.5, y: 0.5}
   m_EdgeRadius: 0
 --- !u!50 &276110471642222744
 Rigidbody2D:
